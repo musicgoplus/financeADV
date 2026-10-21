@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Daybook Pro — Financial Analytics</title>
 
   <!-- External Libraries -->
@@ -14,26 +14,29 @@
     :root {
       --bg-primary: #0f172a;
       --bg-secondary: #1e293b;
-      --bg-card: #1e293b;
-      --border-color: #334155;
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.1);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --accent-color: #6366f1;
       --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.35);
       --success-color: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.25);
       --danger-color: #ef4444;
       --warning-color: #f59e0b;
       --input-bg: #0f172a;
       --input-text: #f8fafc;
       --modal-bg: #1e293b;
       --sidebar-width: 260px;
+      --bottom-nav-height: 68px;
     }
 
     [data-theme="light"] {
       --bg-primary: #f1f5f9;
       --bg-secondary: #ffffff;
       --bg-card: #ffffff;
-      --border-color: #e2e8f0;
+      --card-border: #e2e8f0;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --accent-color: #4f46e5;
@@ -43,298 +46,439 @@
       --modal-bg: #ffffff;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-    body { background-color: var(--bg-primary); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-primary); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; justify-content: center; }
 
-    /* Layout Structure */
-    .sidebar { width: var(--sidebar-width); background-color: var(--bg-secondary); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s ease; }
-    .main-wrapper { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; min-width: 0; }
-    .header { height: 70px; background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; position: sticky; top: 0; z-index: 90; }
-    .content { padding: 2rem; flex: 1; }
+    /* Phone Frame Container Mode */
+    body.mobile-view { background-color: #020617; padding: 1.5rem 0; }
+    body.mobile-view .app-container {
+      width: 412px;
+      height: 860px;
+      background-color: var(--bg-primary);
+      border: 12px solid #334155;
+      border-radius: 44px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    body.mobile-view .mobile-notch {
+      display: flex !important;
+    }
+
+    .mobile-notch {
+      display: none;
+      height: 28px;
+      background-color: var(--bg-secondary);
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .app-container { width: 100%; display: flex; min-height: 100vh; position: relative; }
+    
+    /* Sidebar for Desktop */
+    .sidebar { width: var(--sidebar-width); background-color: var(--bg-secondary); border-right: 1px solid var(--card-border); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s ease; }
+    .main-wrapper { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; min-width: 0; padding-bottom: 80px; }
+    .header { height: 65px; background-color: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; justify-content: space-between; padding: 0 1.25rem; position: sticky; top: 0; z-index: 90; }
+    .content { padding: 1.25rem; flex: 1; max-width: 1200px; margin: 0 auto; width: 100%; }
 
     /* Brand Logo */
-    .brand { display: flex; align-items: center; gap: 0.75rem; padding: 1.5rem; border-bottom: 1px solid var(--border-color); }
-    .brand-logo { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent-color), #818cf8); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem; }
-    .brand-text { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
+    .brand { display: flex; align-items: center; gap: 0.75rem; padding: 1.25rem; border-bottom: 1px solid var(--card-border); }
+    .brand-logo { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent-color), #818cf8); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem; box-shadow: 0 0 12px var(--accent-glow); }
+    .brand-text { font-size: 1.15rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
 
-    /* Navigation */
+    /* Navigation Desktop */
     .nav-links { list-style: none; padding: 1rem 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
-    .nav-item button { width: 100%; display: flex; align-items: center; gap: 0.85rem; padding: 0.75rem 1rem; border: none; background: transparent; color: var(--text-muted); border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s; }
+    .nav-item button { width: 100%; display: flex; align-items: center; gap: 0.85rem; padding: 0.75rem 1rem; border: none; background: transparent; color: var(--text-muted); border-radius: 12px; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s; }
     .nav-item button:hover { background-color: rgba(99, 102, 241, 0.1); color: var(--accent-color); }
-    .nav-item.active button { background-color: var(--accent-color); color: white; }
+    .nav-item.active button { background-color: var(--accent-color); color: white; box-shadow: 0 4px 12px var(--accent-glow); }
 
     /* Status Indicator Badge */
-    .db-status { margin: 1rem; padding: 0.75rem 1rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+    .db-status { margin: 1rem; padding: 0.65rem 1rem; background-color: var(--bg-primary); border: 1px solid var(--card-border); border-radius: 12px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
     .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--warning-color); }
-    .status-dot.active { background-color: var(--success-color); }
+    .status-dot.active { background-color: var(--success-color); box-shadow: 0 0 8px var(--success-color); }
 
     /* Action Buttons & Badges */
-    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; font-size: 0.9rem; }
-    .btn-primary { background-color: var(--accent-color); color: white; }
-    .btn-primary:hover { background-color: var(--accent-hover); }
-    .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
-    .btn-outline:hover { background-color: var(--border-color); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.55rem 1rem; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; font-size: 0.85rem; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent-color), var(--accent-hover)); color: white; box-shadow: 0 4px 14px var(--accent-glow); }
+    .btn-primary:active { transform: scale(0.96); }
+    .btn-outline { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: var(--text-main); }
+    .btn-outline:active { background-color: rgba(255, 255, 255, 0.1); }
     .btn-danger { background-color: var(--danger-color); color: white; }
     .btn-success { background-color: var(--success-color); color: white; }
 
     /* Views Framework */
     .view-section { display: none; }
-    .view-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .view-section.active { display: block; animation: fadeIn 0.25s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Dashboards Cards Grid */
-    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
-    .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; }
-    .card-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .card-value { font-size: 1.75rem; font-weight: 800; color: var(--text-main); }
-    .card-subtext { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; display: flex; align-items: center; gap: 0.3rem; }
+    /* Glass Cards */
+    .card { background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 20px; padding: 1.25rem; box-shadow: 0 8px 24px rgba(0,0,0,0.2); position: relative; }
+    .card-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.6px; }
+    .card-value { font-size: 1.6rem; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px; }
+    .card-subtext { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; display: flex; align-items: center; gap: 0.35rem; font-weight: 600; }
 
-    /* Progress Bar */
-    .progress-bar-bg { width: 100%; height: 8px; background-color: var(--input-bg); border-radius: 4px; overflow: hidden; margin-top: 0.75rem; }
-    .progress-bar-fill { height: 100%; background-color: var(--accent-color); transition: width 0.3s ease; }
+    /* Hero Net Worth Card */
+    .hero-card {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(16, 185, 129, 0.15) 100%), var(--bg-card);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 1.5rem;
+      border-radius: 24px;
+      margin-bottom: 1.25rem;
+    }
 
-    /* Charts Container Grid */
-    .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
-    @media (max-width: 992px) { .charts-grid { grid-template-columns: 1fr; } }
-    .chart-box { height: 300px; position: relative; }
+    /* Floating Bottom Nav (Mobile View) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 0.5rem;
+      z-index: 200;
+    }
+    
+    body.mobile-view .bottom-nav {
+      position: absolute;
+      border-radius: 0 0 32px 32px;
+    }
+
+    .nav-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex: 1;
+      height: 100%;
+      transition: all 0.2s;
+    }
+    .nav-tab i { font-size: 1.15rem; }
+    .nav-tab.active { color: var(--accent-color); }
+
+    /* Floating Add Button (FAB) */
+    .fab-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-color), #818cf8);
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 8px 20px var(--accent-glow);
+      cursor: pointer;
+      margin-top: -24px;
+      transition: transform 0.2s;
+    }
+    .fab-btn:active { transform: scale(0.92); }
+
+    /* Responsive Grid Layouts */
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+    .charts-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+    .chart-box { height: 240px; position: relative; }
 
     /* Form Fields & Dropdowns Style */
-    .form-group { margin-bottom: 1.2rem; }
-    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase; }
     
     .form-control, select, input {
       width: 100%;
       padding: 0.75rem 1rem;
       background-color: var(--input-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
       color: var(--input-text);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       outline: none;
       transition: border-color 0.2s;
     }
     .form-control:focus, select:focus, input:focus { border-color: var(--accent-color); }
 
     select option {
-      background-color: var(--bg-card) !important;
-      color: var(--text-main) !important;
+      background-color: #1e293b !important;
+      color: #ffffff !important;
       padding: 10px;
     }
 
     /* Modal Sheet Styling */
-    .modal-backdrop { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .modal-backdrop { position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
+    @media (min-width: 768px) { .modal-backdrop { align-items: center; } }
     .modal-backdrop.active { display: flex; }
-    .modal { background-color: var(--modal-bg); border: 1px solid var(--border-color); border-radius: 16px; width: 100%; max-width: 520px; padding: 1.75rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); position: relative; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .modal-title { font-size: 1.2rem; font-weight: 700; }
-    .modal-close { background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted); cursor: pointer; }
+    .modal { background-color: var(--modal-bg); border: 1px solid var(--card-border); border-radius: 28px 28px 0 0; width: 100%; max-width: 480px; padding: 1.5rem; box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5); position: relative; animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+    @media (min-width: 768px) { .modal { border-radius: 24px; } }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-    /* Table Styles */
-    .table-responsive { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; text-align: left; }
-    th, td { padding: 1rem; border-bottom: 1px solid var(--border-color); }
-    th { font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
-    td { font-size: 0.9rem; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+    .modal-title { font-size: 1.1rem; font-weight: 800; }
+    .modal-close { background: rgba(255, 255, 255, 0.08); border: none; width: 32px; height: 32px; border-radius: 50%; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+    /* Mobile Transaction Cards List */
+    .tx-mobile-list { display: flex; flex-direction: column; gap: 0.75rem; list-style: none; }
+    .tx-mobile-card { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 16px; }
+    .tx-mobile-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1rem; margin-right: 0.75rem; flex-shrink: 0; }
+    .tx-mobile-icon.income { background: rgba(16, 185, 129, 0.15); color: var(--success-color); }
+    .tx-mobile-icon.expense { background: rgba(239, 68, 68, 0.15); color: var(--danger-color); }
+    .tx-mobile-info { flex: 1; min-width: 0; }
+    .tx-mobile-desc { font-weight: 700; font-size: 0.9rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tx-mobile-meta { font-size: 0.75rem; color: var(--text-muted); display: flex; gap: 0.5rem; margin-top: 2px; }
+    .tx-mobile-amount { font-weight: 800; font-size: 0.95rem; text-align: right; }
+
+    /* Media Query Controls for Mobile Screens */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-wrapper { margin-left: 0; }
+    }
   </style>
 </head>
-<body>
+<body id="bodyRoot">
 
-  <!-- Sidebar Component -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-logo"><i class="fa-solid fa-wallet"></i></div>
-      <div class="brand-text">Daybook Pro</div>
+  <!-- Mobile Notch (Active in Android Frame Preview) -->
+  <div class="mobile-notch">
+    <span>9:41</span>
+    <div style="display: flex; gap: 6px;">
+      <i class="fa-solid fa-wifi"></i>
+      <i class="fa-solid fa-battery-full"></i>
     </div>
-    <ul class="nav-links">
-      <li class="nav-item active" data-view="dashboard"><button onclick="switchView('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button></li>
-      <li class="nav-item" data-view="transactions"><button onclick="switchView('transactions')"><i class="fa-solid fa-list-check"></i> Transactions</button></li>
-      <li class="nav-item" data-view="envelopes"><button onclick="switchView('envelopes')"><i class="fa-solid fa-envelope-open-text"></i> Envelopes</button></li>
-      <li class="nav-item" data-view="recurring"><button onclick="switchView('recurring')"><i class="fa-solid fa-arrows-rotate"></i> Recurring</button></li>
-      <li class="nav-item" data-view="debts"><button onclick="switchView('debts')"><i class="fa-solid fa-hand-holding-dollar"></i> Debts & Loans</button></li>
-      <li class="nav-item" data-view="settings"><button onclick="switchView('settings')"><i class="fa-solid fa-gear"></i> Settings & Sync</button></li>
-    </ul>
+  </div>
 
-    <div class="db-status">
-      <div id="statusDot" class="status-dot"></div>
-      <span id="statusText">LocalStorage Mode</span>
-    </div>
-  </aside>
-
-  <!-- Main Area -->
-  <div class="main-wrapper">
-    <header class="header">
-      <h2 id="viewTitle" style="font-size: 1.3rem; font-weight: 700;">Dashboard</h2>
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <button class="btn btn-outline" onclick="triggerRefresh()" title="Refresh Data"><i class="fa-solid fa-rotate" id="refreshIcon"></i> Refresh</button>
-        <select id="currencySelector" onchange="changeCurrency()" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.85rem;">
-          <option value="PHP">₱ PHP</option>
-          <option value="USD">$ USD</option>
-          <option value="EUR">€ EUR</option>
-          <option value="GBP">£ GBP</option>
-        </select>
-        <button class="btn btn-outline" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
-        <button class="btn btn-primary" onclick="openTxModal()"><i class="fa-solid fa-plus"></i> New Transaction</button>
+  <div class="app-container">
+    <!-- Sidebar Component (Desktop view) -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo"><i class="fa-solid fa-wallet"></i></div>
+        <div class="brand-text">Daybook Pro</div>
       </div>
-    </header>
+      <ul class="nav-links">
+        <li class="nav-item active" data-view="dashboard"><button onclick="switchView('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button></li>
+        <li class="nav-item" data-view="transactions"><button onclick="switchView('transactions')"><i class="fa-solid fa-list-check"></i> Transactions</button></li>
+        <li class="nav-item" data-view="envelopes"><button onclick="switchView('envelopes')"><i class="fa-solid fa-envelope-open-text"></i> Envelopes</button></li>
+        <li class="nav-item" data-view="recurring"><button onclick="switchView('recurring')"><i class="fa-solid fa-arrows-rotate"></i> Recurring</button></li>
+        <li class="nav-item" data-view="debts"><button onclick="switchView('debts')"><i class="fa-solid fa-hand-holding-dollar"></i> Debts & Loans</button></li>
+        <li class="nav-item" data-view="settings"><button onclick="switchView('settings')"><i class="fa-solid fa-gear"></i> Settings & Sync</button></li>
+      </ul>
 
-    <main class="content">
+      <div class="db-status">
+        <div id="statusDot" class="status-dot"></div>
+        <span id="statusText">LocalStorage Mode</span>
+      </div>
+    </aside>
 
-      <!-- View 1: Dashboard -->
-      <section id="dashboard" class="view-section active">
-        <div class="metrics-grid">
-          <div class="card">
-            <div class="card-title">Net Networth</div>
-            <div id="netWorthVal" class="card-value">₱0.00</div>
-            <div class="card-subtext" style="color: var(--success-color);"><i class="fa-solid fa-shield-halved"></i> Total Balance</div>
-          </div>
-          <div class="card">
-            <div class="card-title">Monthly Income</div>
-            <div id="monthlyIncVal" class="card-value" style="color: var(--success-color);">₱0.00</div>
-            <div class="card-subtext"><i class="fa-solid fa-arrow-up-right-dots"></i> Active Month</div>
-          </div>
-          <div class="card">
-            <div class="card-title">Monthly Expenses</div>
-            <div id="monthlyExpVal" class="card-value" style="color: var(--danger-color);">₱0.00</div>
-            <div class="card-subtext"><i class="fa-solid fa-arrow-down-left-trend-bars"></i> Active Month</div>
-          </div>
-          <div class="card">
-            <div class="card-title">Net Monthly Savings</div>
-            <div id="monthlySavingsVal" class="card-value">₱0.00</div>
-            <div class="card-subtext" id="savingsRateVal"><i class="fa-solid fa-percent"></i> 0% Rate</div>
-          </div>
+    <!-- Main Area -->
+    <div class="main-wrapper">
+      <header class="header">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <div class="brand-logo" style="width:28px; height:28px; font-size:0.9rem;"><i class="fa-solid fa-wallet"></i></div>
+          <h2 id="viewTitle" style="font-size: 1.1rem; font-weight: 800; letter-spacing: -0.3px;">Dashboard</h2>
         </div>
+        <div style="display: flex; align-items: center; gap: 0.4rem;">
+          <button class="btn btn-outline" onclick="toggleAndroidPhoneView()" title="Toggle Phone Frame" style="padding:0.4rem 0.6rem;"><i class="fa-solid fa-mobile-screen"></i></button>
+          <button class="btn btn-outline" onclick="triggerRefresh()" title="Refresh" style="padding:0.4rem 0.6rem;"><i class="fa-solid fa-rotate" id="refreshIcon"></i></button>
+          <select id="currencySelector" onchange="changeCurrency()" style="width: auto; padding: 0.35rem 0.5rem; font-size: 0.8rem; font-weight: 700;">
+            <option value="PHP">₱</option>
+            <option value="USD">$</option>
+            <option value="EUR">€</option>
+            <option value="GBP">£</option>
+          </select>
+        </div>
+      </header>
 
-        <div class="charts-grid">
-          <div class="card">
-            <div class="card-title">Income vs Expenses Analysis</div>
-            <div class="chart-box"><canvas id="barChart"></canvas></div>
+      <main class="content">
+
+        <!-- View 1: Dashboard -->
+        <section id="dashboard" class="view-section active">
+          <!-- Hero Networth Banner -->
+          <div class="hero-card">
+            <div class="card-title">Total Net Worth</div>
+            <div id="netWorthVal" class="card-value" style="font-size: 2.1rem; margin-top: 2px;">₱0.00</div>
+            <div class="card-subtext" style="color: var(--success-color); font-weight: 700;"><i class="fa-solid fa-shield-halved"></i> Active Accounts & Vault Balance</div>
           </div>
-          <div class="card">
-            <div class="card-title">Expense Breakdown</div>
-            <div class="chart-box"><canvas id="donutChart"></canvas></div>
-          </div>
-        </div>
 
-        <!-- Accounts Grid -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <h3 style="font-size: 1.1rem; font-weight: 700;">Wallets & Accounts</h3>
-          <button class="btn btn-outline" onclick="openAccountModal()"><i class="fa-solid fa-plus"></i> Add Account</button>
-        </div>
-        <div id="accountsContainer" class="metrics-grid" style="margin-bottom: 2rem;"></div>
-      </section>
-
-      <!-- View 2: Transactions -->
-      <section id="transactions" class="view-section">
-        <div class="card">
-          <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-            <input type="text" id="txSearch" placeholder="Search description..." oninput="renderTransactions()" style="flex:1;">
-            <select id="txCategoryFilter" onchange="renderTransactions()" style="width: 200px;">
-              <option value="ALL">All Categories</option>
-              <option value="Salary">Salary</option>
-              <option value="Food">Food</option>
-              <option value="Transport">Transport</option>
-              <option value="Bills">Bills</option>
-              <option value="Shopping">Shopping</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>Type</th>
-                  <th>Amount</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="txTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- View 3: Budget Envelopes -->
-      <section id="envelopes" class="view-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <h3 style="font-size: 1.1rem; font-weight: 700;">Monthly Category Budget Envelopes</h3>
-          <button class="btn btn-primary" onclick="openEnvelopeModal()"><i class="fa-solid fa-pen"></i> Configure Cap</button>
-        </div>
-        <div id="envelopeContainer" class="metrics-grid"></div>
-      </section>
-
-      <!-- View 4: Recurring Engine -->
-      <section id="recurring" class="view-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <h3 style="font-size: 1.1rem; font-weight: 700;">Scheduled & Recurring Bills</h3>
-          <button class="btn btn-primary" onclick="openRecurringModal()"><i class="fa-solid fa-plus"></i> Add Schedule</button>
-        </div>
-        <div id="recurringContainer" class="metrics-grid"></div>
-      </section>
-
-      <!-- View 5: Debts & Loans -->
-      <section id="debts" class="view-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <h3 style="font-size: 1.1rem; font-weight: 700;">Debts and Loans Tracker</h3>
-          <button class="btn btn-primary" onclick="openDebtModal()"><i class="fa-solid fa-plus"></i> Record Debt/Loan</button>
-        </div>
-        <div id="debtContainer" class="metrics-grid"></div>
-      </section>
-
-      <!-- View 6: Settings & Database Sync -->
-      <section id="settings" class="view-section">
-        <div class="card" style="max-width: 600px; margin: 0 auto;">
-          <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;">Supabase Integration Settings</h3>
-          <form id="supabaseForm" onsubmit="saveSupabaseConfig(event)">
-            <div class="form-group">
-              <label>Supabase Project URL</label>
-              <input type="text" id="spUrl" placeholder="https://xyz.supabase.co">
+          <div class="metrics-grid">
+            <div class="card">
+              <div class="card-title">Income</div>
+              <div id="monthlyIncVal" class="card-value" style="color: var(--success-color); font-size: 1.35rem;">₱0.00</div>
             </div>
-            <div class="form-group">
-              <label>Supabase Anon Key</label>
-              <input type="password" id="spKey" placeholder="eyJhbGci...">
+            <div class="card">
+              <div class="card-title">Expenses</div>
+              <div id="monthlyExpVal" class="card-value" style="color: var(--danger-color); font-size: 1.35rem;">₱0.00</div>
             </div>
-            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-              <button type="submit" class="btn btn-primary" style="flex:1;">Save & Sync Database</button>
-              <button type="button" class="btn btn-danger" onclick="disconnectSupabase()">Disconnect</button>
+            <div class="card" style="grid-column: 1/-1;">
+              <div class="card-title">Net Savings & Rate</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <div id="monthlySavingsVal" class="card-value" style="font-size: 1.35rem;">₱0.00</div>
+                <div id="savingsRateVal" style="font-size: 0.85rem; font-weight: 800; color: var(--accent-color);"><i class="fa-solid fa-percent"></i> 0% Savings Rate</div>
+              </div>
             </div>
-          </form>
-        </div>
-      </section>
+          </div>
 
-    </main>
+          <div class="charts-grid">
+            <div class="card">
+              <div class="card-title">Income vs Expenses</div>
+              <div class="chart-box"><canvas id="barChart"></canvas></div>
+            </div>
+            <div class="card">
+              <div class="card-title">Expense Breakdown</div>
+              <div class="chart-box"><canvas id="donutChart"></canvas></div>
+            </div>
+          </div>
+
+          <!-- Accounts Grid -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+            <h3 style="font-size: 0.95rem; font-weight: 800; letter-spacing: -0.3px;">Wallets & Accounts</h3>
+            <button class="btn btn-outline" onclick="openAccountModal()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;"><i class="fa-solid fa-plus"></i> Add Account</button>
+          </div>
+          <div id="accountsContainer" class="metrics-grid" style="margin-bottom: 1.5rem;"></div>
+        </section>
+
+        <!-- View 2: Transactions -->
+        <section id="transactions" class="view-section">
+          <div class="card" style="padding: 1rem;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+              <input type="text" id="txSearch" placeholder="Search..." oninput="renderTransactions()" style="flex:1; padding: 0.6rem 0.8rem;">
+              <select id="txCategoryFilter" onchange="renderTransactions()" style="width: 120px; padding: 0.6rem;">
+                <option value="ALL">All Cats</option>
+                <option value="Salary">Salary</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Bills">Bills</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div id="txMobileContainer" class="tx-mobile-list"></div>
+          </div>
+        </section>
+
+        <!-- View 3: Budget Envelopes -->
+        <section id="envelopes" class="view-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+            <h3 style="font-size: 0.95rem; font-weight: 800;">Budget Envelopes</h3>
+            <button class="btn btn-primary" onclick="openEnvelopeModal()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Edit Caps</button>
+          </div>
+          <div id="envelopeContainer" class="metrics-grid"></div>
+        </section>
+
+        <!-- View 4: Recurring Engine -->
+        <section id="recurring" class="view-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+            <h3 style="font-size: 0.95rem; font-weight: 800;">Recurring Bills</h3>
+            <button class="btn btn-primary" onclick="openRecurringModal()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;"><i class="fa-solid fa-plus"></i> Add Bill</button>
+          </div>
+          <div id="recurringContainer" class="metrics-grid"></div>
+        </section>
+
+        <!-- View 5: Debts & Loans -->
+        <section id="debts" class="view-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+            <h3 style="font-size: 0.95rem; font-weight: 800;">Debts & Loans</h3>
+            <button class="btn btn-primary" onclick="openDebtModal()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;"><i class="fa-solid fa-plus"></i> Record</button>
+          </div>
+          <div id="debtContainer" class="metrics-grid"></div>
+        </section>
+
+        <!-- View 6: Settings & Database Sync -->
+        <section id="settings" class="view-section">
+          <div class="card">
+            <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 1rem;">Supabase Sync Settings</h3>
+            <form id="supabaseForm" onsubmit="saveSupabaseConfig(event)">
+              <div class="form-group">
+                <label>Project URL</label>
+                <input type="text" id="spUrl" placeholder="https://xyz.supabase.co">
+              </div>
+              <div class="form-group">
+                <label>Anon Key</label>
+                <input type="password" id="spKey" placeholder="eyJhbGci...">
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary" style="flex:1;">Save & Sync</button>
+                <button type="button" class="btn btn-danger" onclick="disconnectSupabase()">Disconnect</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- Mobile Floating Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-tab="dashboard" onclick="switchView('dashboard')">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>Home</span>
+      </button>
+      <button class="nav-tab" data-tab="transactions" onclick="switchView('transactions')">
+        <i class="fa-solid fa-list-check"></i>
+        <span>History</span>
+      </button>
+      
+      <!-- Center FAB Button -->
+      <button class="fab-btn" onclick="openTxModal()" title="Add Transaction">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+
+      <button class="nav-tab" data-tab="envelopes" onclick="switchView('envelopes')">
+        <i class="fa-solid fa-envelope-open-text"></i>
+        <span>Budgets</span>
+      </button>
+      <button class="nav-tab" data-tab="settings" onclick="switchView('settings')">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </button>
+    </nav>
   </div>
 
   <!-- Modal 1: New Transaction -->
   <div id="txModal" class="modal-backdrop">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Add Transaction</div>
+        <div class="modal-title">New Transaction</div>
         <button class="modal-close" onclick="closeModal('txModal')">✕</button>
       </div>
       <form id="txForm" onsubmit="handleSaveTx(event)">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
           <div class="form-group">
-            <label>TYPE</label>
+            <label>Type</label>
             <select id="txType" required>
               <option value="income">Income</option>
               <option value="expense">Expense</option>
             </select>
           </div>
           <div class="form-group">
-            <label>AMOUNT</label>
+            <label>Amount</label>
             <input type="number" id="txAmount" step="0.01" placeholder="0.00" required>
           </div>
         </div>
         <div class="form-group">
-          <label>DESCRIPTION</label>
-          <input type="text" id="txDesc" placeholder="Description" required>
+          <label>Description</label>
+          <input type="text" id="txDesc" placeholder="e.g. Salary, Grocery, Gas" required>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
           <div class="form-group">
-            <label>CATEGORY</label>
+            <label>Category</label>
             <select id="txCategory" required>
               <option value="Salary">Salary</option>
               <option value="Food">Food</option>
@@ -345,17 +489,17 @@
             </select>
           </div>
           <div class="form-group">
-            <label>ACCOUNT</label>
+            <label>Account</label>
             <select id="txAccount" required></select>
           </div>
         </div>
         <div class="form-group">
-          <label>DATE</label>
+          <label>Date</label>
           <input type="date" id="txDate" required>
         </div>
-        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem;">
           <button type="button" class="btn btn-outline" onclick="closeModal('txModal')">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Transaction</button>
+          <button type="submit" class="btn btn-primary" style="flex: 1;">Save Entry</button>
         </div>
       </form>
     </div>
@@ -365,16 +509,16 @@
   <div id="accountModal" class="modal-backdrop">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Add New Wallet / Account</div>
+        <div class="modal-title">Add Wallet Account</div>
         <button class="modal-close" onclick="closeModal('accountModal')">✕</button>
       </div>
       <form id="accountForm" onsubmit="handleSaveAccount(event)">
         <div class="form-group">
-          <label>ACCOUNT NAME</label>
-          <input type="text" id="accName" placeholder="e.g. GCash, Savings, Cash" required>
+          <label>Account Name</label>
+          <input type="text" id="accName" placeholder="e.g. GCash, Maya, Cash" required>
         </div>
         <div class="form-group">
-          <label>INITIAL BALANCE</label>
+          <label>Initial Balance</label>
           <input type="number" id="accBalance" step="0.01" placeholder="0.00" required>
         </div>
         <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Create Account</button>
@@ -386,15 +530,15 @@
   <div id="envelopeModal" class="modal-backdrop">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Configure Envelope Caps</div>
+        <div class="modal-title">Configure Caps</div>
         <button class="modal-close" onclick="closeModal('envelopeModal')">✕</button>
       </div>
       <form id="envelopeForm" onsubmit="handleSaveEnvelopes(event)">
-        <div class="form-group"><label>Food Cap</label><input type="number" id="capFood" placeholder="0 = No limit"></div>
-        <div class="form-group"><label>Transport Cap</label><input type="number" id="capTransport" placeholder="0 = No limit"></div>
-        <div class="form-group"><label>Bills Cap</label><input type="number" id="capBills" placeholder="0 = No limit"></div>
-        <div class="form-group"><label>Shopping Cap</label><input type="number" id="capShopping" placeholder="0 = No limit"></div>
-        <div class="form-group"><label>Other Cap</label><input type="number" id="capOther" placeholder="0 = No limit"></div>
+        <div class="form-group"><label>Food Cap</label><input type="number" id="capFood" placeholder="0"></div>
+        <div class="form-group"><label>Transport Cap</label><input type="number" id="capTransport" placeholder="0"></div>
+        <div class="form-group"><label>Bills Cap</label><input type="number" id="capBills" placeholder="0"></div>
+        <div class="form-group"><label>Shopping Cap</label><input type="number" id="capShopping" placeholder="0"></div>
+        <div class="form-group"><label>Other Cap</label><input type="number" id="capOther" placeholder="0"></div>
         <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Save Caps</button>
       </form>
     </div>
@@ -404,21 +548,21 @@
   <div id="recurringModal" class="modal-backdrop">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Add Scheduled Bill / Subscription</div>
+        <div class="modal-title">Add Scheduled Bill</div>
         <button class="modal-close" onclick="closeModal('recurringModal')">✕</button>
       </div>
       <form id="recurringForm" onsubmit="handleSaveRecurring(event)">
         <div class="form-group">
-          <label>TITLE</label>
-          <input type="text" id="recTitle" placeholder="e.g. Netflix, WiFi, Rent" required>
+          <label>Title</label>
+          <input type="text" id="recTitle" placeholder="Netflix, Rent" required>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
           <div class="form-group">
-            <label>AMOUNT</label>
+            <label>Amount</label>
             <input type="number" id="recAmount" step="0.01" required>
           </div>
           <div class="form-group">
-            <label>FREQUENCY</label>
+            <label>Frequency</label>
             <select id="recFreq" required>
               <option value="Monthly">Monthly</option>
               <option value="Weekly">Weekly</option>
@@ -427,10 +571,10 @@
           </div>
         </div>
         <div class="form-group">
-          <label>DUE DATE</label>
+          <label>Due Date</label>
           <input type="date" id="recDate" required>
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Save Schedule</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Save Bill</button>
       </form>
     </div>
   </div>
@@ -444,34 +588,34 @@
       </div>
       <form id="debtForm" onsubmit="handleSaveDebt(event)">
         <div class="form-group">
-          <label>TITLE / PERSON</label>
-          <input type="text" id="debtTitle" placeholder="e.g. John (Lent money), Credit Card" required>
+          <label>Title / Person</label>
+          <input type="text" id="debtTitle" placeholder="Name or Credit Card" required>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
           <div class="form-group">
-            <label>TYPE</label>
+            <label>Type</label>
             <select id="debtType" required>
-              <option value="borrowed">Debt (I Borrowed)</option>
-              <option value="lent">Loan (I Lent Out)</option>
+              <option value="borrowed">Borrowed</option>
+              <option value="lent">Lent Out</option>
             </select>
           </div>
           <div class="form-group">
-            <label>AMOUNT</label>
+            <label>Amount</label>
             <input type="number" id="debtAmount" step="0.01" required>
           </div>
         </div>
         <div class="form-group">
-          <label>DUE DATE</label>
+          <label>Due Date</label>
           <input type="date" id="debtDate">
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Save Record</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Save Debt</button>
       </form>
     </div>
   </div>
 
   <!-- Application Logic JS -->
   <script>
-    const STORAGE_KEY = 'daybook_pro_data_v11';
+    const STORAGE_KEY = 'daybook_pro_data_v13';
     let supabaseClient = null;
 
     let appState = {
@@ -481,7 +625,7 @@
       recurring: [],
       debts: [],
       currency: 'PHP',
-      theme: 'dark',
+      isMobileView: false,
       supabase: { url: '', key: '' }
     };
 
@@ -505,8 +649,8 @@
       document.getElementById('currencySelector').value = appState.currency;
       document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
 
-      if (appState.theme === 'light') {
-        document.body.setAttribute('data-theme', 'light');
+      if (appState.isMobileView) {
+        document.getElementById('bodyRoot').classList.add('mobile-view');
       }
 
       if (appState.supabase.url && appState.supabase.key) {
@@ -522,6 +666,12 @@
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
       renderAll();
+    }
+
+    function toggleAndroidPhoneView() {
+      appState.isMobileView = !appState.isMobileView;
+      document.getElementById('bodyRoot').classList.toggle('mobile-view', appState.isMobileView);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
     }
 
     function initSupabase() {
@@ -648,7 +798,7 @@
     }
 
     function deleteAccount(id) {
-      if (confirm('Delete this account? Associated balances will be removed.')) {
+      if (confirm('Delete this account?')) {
         appState.accounts = appState.accounts.filter(a => a.id !== id);
         if (supabaseClient) {
           supabaseClient.from('accounts').delete().eq('id', id).then();
@@ -663,15 +813,15 @@
         <div class="card">
           <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div class="card-title" style="margin-bottom:0;">${acc.name}</div>
-            <button class="btn btn-danger" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;" onclick="deleteAccount('${acc.id}')" title="Delete Account">✕</button>
+            <button class="btn btn-danger" style="padding: 0.1rem 0.3rem; font-size: 0.65rem;" onclick="deleteAccount('${acc.id}')">✕</button>
           </div>
-          <div class="card-value" style="margin-top: 0.5rem;">${formatCurrency(acc.balance)}</div>
+          <div class="card-value" style="font-size: 1.25rem; margin-top: 0.4rem;">${formatCurrency(acc.balance)}</div>
         </div>
       `).join('');
     }
 
     function renderTransactions() {
-      const tbody = document.getElementById('txTableBody');
+      const container = document.getElementById('txMobileContainer');
       const search = document.getElementById('txSearch').value.toLowerCase();
       const filter = document.getElementById('txCategoryFilter').value;
 
@@ -681,15 +831,31 @@
         return matchesSearch && matchesCat;
       });
 
-      tbody.innerHTML = filtered.map(t => `
-        <tr>
-          <td>${t.date}</td>
-          <td>${t.description}</td>
-          <td><span class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem;">${t.category}</span></td>
-          <td style="color: ${t.type === 'income' ? 'var(--success-color)' : 'var(--danger-color)'}; font-weight:700;">${t.type.toUpperCase()}</td>
-          <td style="font-weight:700;">${formatCurrency(t.amount)}</td>
-          <td><button class="btn btn-danger" style="padding:0.2rem 0.5rem; font-size:0.75rem;" onclick="deleteTx('${t.id}')">Delete</button></td>
-        </tr>
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-muted); font-size:0.85rem;">No transactions found</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(t => `
+        <div class="tx-mobile-card">
+          <div style="display: flex; align-items: center; min-width: 0;">
+            <div class="tx-mobile-icon ${t.type}">
+              <i class="fa-solid ${t.type === 'income' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+            </div>
+            <div class="tx-mobile-info">
+              <div class="tx-mobile-desc">${t.description}</div>
+              <div class="tx-mobile-meta">
+                <span>${t.category}</span> • <span>${t.date}</span>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div class="tx-mobile-amount" style="color: ${t.type === 'income' ? 'var(--success-color)' : 'var(--danger-color)'}">
+              ${t.type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}
+            </div>
+            <button class="btn btn-danger" style="padding: 0.2rem 0.4rem; font-size: 0.7rem;" onclick="deleteTx('${t.id}')">✕</button>
+          </div>
+        </div>
       `).join('');
     }
 
@@ -722,7 +888,7 @@
       document.getElementById('monthlyIncVal').textContent = formatCurrency(inc);
       document.getElementById('monthlyExpVal').textContent = formatCurrency(exp);
       document.getElementById('monthlySavingsVal').textContent = formatCurrency(savings);
-      document.getElementById('savingsRateVal').innerHTML = `<i class="fa-solid fa-percent"></i> ${rate}% Savings Rate`;
+      document.getElementById('savingsRateVal').innerHTML = `<i class="fa-solid fa-percent"></i> ${rate}% Rate`;
 
       renderCharts(inc, exp);
     }
@@ -738,8 +904,8 @@
       barChartInst = new Chart(ctxBar, {
         type: 'bar',
         data: {
-          labels: ['Income', 'Expenses'],
-          datasets: [{ data: [inc, exp], backgroundColor: ['#10b981', '#ef4444'], borderRadius: 8 }]
+          labels: ['Inc', 'Exp'],
+          datasets: [{ data: [inc, exp], backgroundColor: ['#10b981', '#ef4444'], borderRadius: 6 }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
       });
@@ -762,7 +928,6 @@
       });
     }
 
-    /* Envelope View Functions */
     function openEnvelopeModal() {
       document.getElementById('capFood').value = appState.envelopes.Food || '';
       document.getElementById('capTransport').value = appState.envelopes.Transport || '';
@@ -801,15 +966,15 @@
           <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <div class="card-title" style="margin-bottom:0;">${cat}</div>
-              <span style="font-size:0.75rem; font-weight:700; color:${isOver ? 'var(--danger-color)' : 'var(--text-muted)'};">
-                ${target > 0 ? (isOver ? 'EXCEEDED' : pct.toFixed(0) + '%') : 'No Limit'}
+              <span style="font-size:0.7rem; font-weight:700; color:${isOver ? 'var(--danger-color)' : 'var(--text-muted)'};">
+                ${target > 0 ? (isOver ? 'EXC' : pct.toFixed(0) + '%') : 'No Limit'}
               </span>
             </div>
-            <div class="card-value" style="font-size: 1.4rem; margin-top: 0.5rem;">${formatCurrency(spent)}</div>
+            <div class="card-value" style="font-size: 1.2rem; margin-top: 0.4rem;">${formatCurrency(spent)}</div>
             <div class="card-subtext">Cap: ${target > 0 ? formatCurrency(target) : 'Unlimited'}</div>
             ${target > 0 ? `
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: ${pct}%; background-color: ${isOver ? 'var(--danger-color)' : 'var(--accent-color)'};"></div>
+              <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-top:8px;">
+                <div style="width: ${pct}%; height:100%; background: ${isOver ? 'var(--danger-color)' : 'var(--accent-color)'};"></div>
               </div>
             ` : ''}
           </div>
@@ -817,7 +982,6 @@
       }).join('');
     }
 
-    /* Recurring Engine Functions */
     function openRecurringModal() { document.getElementById('recurringModal').classList.add('active'); }
 
     function handleSaveRecurring(e) {
@@ -869,7 +1033,7 @@
       }
 
       saveState();
-      alert(`Paid ${formatCurrency(rec.amount)} for ${rec.title}. Recorded in transactions!`);
+      alert(`Paid ${formatCurrency(rec.amount)} for ${rec.title}.`);
     }
 
     function deleteRecurring(id) {
@@ -883,24 +1047,23 @@
     function renderRecurring() {
       const container = document.getElementById('recurringContainer');
       if (appState.recurring.length === 0) {
-        container.innerHTML = `<div class="card" style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No recurring schedules added yet.</div>`;
+        container.innerHTML = `<div class="card" style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No recurring schedules.</div>`;
         return;
       }
 
       container.innerHTML = appState.recurring.map(rec => `
         <div class="card">
           <div class="card-title">${rec.title} (${rec.frequency})</div>
-          <div class="card-value" style="color: var(--danger-color); font-size: 1.4rem;">${formatCurrency(rec.amount)}</div>
+          <div class="card-value" style="color: var(--danger-color); font-size: 1.2rem;">${formatCurrency(rec.amount)}</div>
           <div class="card-subtext">Due: ${rec.date}</div>
-          <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-            <button class="btn btn-success" style="flex:1; padding: 0.4rem; font-size: 0.8rem;" onclick="payRecurring('${rec.id}')">Pay Now</button>
-            <button class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="deleteRecurring('${rec.id}')">✕</button>
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+            <button class="btn btn-success" style="flex:1; padding: 0.35rem; font-size: 0.75rem;" onclick="payRecurring('${rec.id}')">Pay</button>
+            <button class="btn btn-danger" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;" onclick="deleteRecurring('${rec.id}')">✕</button>
           </div>
         </div>
       `).join('');
     }
 
-    /* Debts & Loans Functions */
     function openDebtModal() { document.getElementById('debtModal').classList.add('active'); }
 
     function handleSaveDebt(e) {
@@ -934,24 +1097,24 @@
     function renderDebts() {
       const container = document.getElementById('debtContainer');
       if (appState.debts.length === 0) {
-        container.innerHTML = `<div class="card" style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No active debts or loans recorded.</div>`;
+        container.innerHTML = `<div class="card" style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No active debts.</div>`;
         return;
       }
 
       container.innerHTML = appState.debts.map(d => `
         <div class="card">
           <div class="card-title">${d.title} (${d.type === 'borrowed' ? 'Debt' : 'Loan'})</div>
-          <div class="card-value" style="color: ${d.type === 'borrowed' ? 'var(--danger-color)' : 'var(--success-color)'}; font-size: 1.4rem;">${formatCurrency(d.amount)}</div>
-          <div class="card-subtext">Due Date: ${d.date || 'N/A'}</div>
-          <button class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.4rem; font-size: 0.8rem;" onclick="settleDebt('${d.id}')">Mark Settled</button>
+          <div class="card-value" style="color: ${d.type === 'borrowed' ? 'var(--danger-color)' : 'var(--success-color)'}; font-size: 1.2rem;">${formatCurrency(d.amount)}</div>
+          <div class="card-subtext">Due: ${d.date || 'N/A'}</div>
+          <button class="btn btn-primary" style="width: 100%; margin-top: 0.75rem; padding: 0.35rem; font-size: 0.75rem;" onclick="settleDebt('${d.id}')">Settle</button>
         </div>
       `).join('');
     }
 
-    /* Navigation Controller */
     function switchView(viewId) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
       
       const targetView = document.getElementById(viewId);
       if (targetView) targetView.classList.add('active');
@@ -959,21 +1122,18 @@
       const navBtn = document.querySelector(`.nav-item[data-view="${viewId}"]`);
       if (navBtn) navBtn.classList.add('active');
 
+      const navTab = document.querySelector(`.nav-tab[data-tab="${viewId}"]`);
+      if (navTab) navTab.classList.add('active');
+
       const titles = {
-        dashboard: 'Dashboard Overview',
-        transactions: 'All Transactions',
-        envelopes: 'Budget Envelopes',
-        recurring: 'Recurring Expenses',
-        debts: 'Debts & Loans Tracker',
-        settings: 'Database Sync Settings'
+        dashboard: 'Dashboard',
+        transactions: 'Transactions',
+        envelopes: 'Budgets',
+        recurring: 'Recurring',
+        debts: 'Debts & Loans',
+        settings: 'Settings & Sync'
       };
       document.getElementById('viewTitle').textContent = titles[viewId] || 'Dashboard';
-    }
-
-    function toggleTheme() {
-      appState.theme = appState.theme === 'dark' ? 'light' : 'dark';
-      document.body.setAttribute('data-theme', appState.theme);
-      saveState();
     }
 
     function changeCurrency() {
